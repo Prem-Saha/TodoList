@@ -4,15 +4,26 @@ import TaskItem from '../components/TaskItem';
 import TaskForm from '../components/TaskForm';
 
 export async function getServerSideProps(context) {
-  const res = await fetch('http://localhost:3000/data.json');
-  const tasks = await res.json();
-  const searchQuery = context.query.search || '';
-  return {
-    props: {
-      tasks,
-      searchQuery,
-    },
-  };
+  try {
+    const res = await fetch('http://localhost:3000/data.json'); // Adjust URL if necessary
+    if (!res.ok) throw new Error('Network response was not ok');
+    const tasks = await res.json();
+    const searchQuery = context.query.search || '';
+    return {
+      props: {
+        tasks,
+        searchQuery,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return {
+      props: {
+        tasks: [],
+        searchQuery: '',
+      },
+    };
+  }
 }
 
 export default function Home({ tasks, searchQuery }) {
